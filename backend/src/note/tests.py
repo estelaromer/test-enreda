@@ -108,7 +108,7 @@ class PostNoteTest(APITestCase):
             deleted=True
         )
 
-    def test_post_note_valid(self):
+    def test_post_note_without_tag_valid(self):
         url = reverse('create_note')
         data = {
             'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
@@ -119,6 +119,32 @@ class PostNoteTest(APITestCase):
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_post_note_with_tag_valid(self):
+        url = reverse('create_note')
+        data = {
+            'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
+            'note': fake.text(),
+            'user_id': self.active_user.id,
+            'task': False,
+            'tag': 'Factura'
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_post_note_tag_invalid(self):
+        url = reverse('create_note')
+        data = {
+            'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
+            'note': fake.text(),
+            'user_id': self.active_user.id,
+            'task': False,
+            'tag': 'Vamos a crear una cadena que sea más larga de treinta caracteres'
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_post_note_end_date_invalid(self):
         url = reverse('create_note')

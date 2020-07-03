@@ -39,6 +39,7 @@ class NewNoteSerializer(Serializer):
     note = CharField(min_length=1)
     user_id = IntegerField()
     task = BooleanField()
+    tag = CharField(required=False)
 
     def validate_end_date(self, value):
         if value <= make_aware(datetime.now()):
@@ -49,5 +50,11 @@ class NewNoteSerializer(Serializer):
     def validate_note(self, value):
         if len(value) < 1:
             raise ValidationError("El mensaje de la nota no puede estar vacío")
+
+        return value
+
+    def validate_tag(self, value):
+        if len(value) > 30:
+            raise ValidationError("La tag no debe ocupar más de 30 caracteres")
 
         return value

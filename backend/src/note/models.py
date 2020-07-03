@@ -25,17 +25,6 @@ class User(models.Model):
         super(User, self).delete()
 
 
-class Tag(models.Model):
-    """Tag model definition"""
-    tag_name = models.CharField(max_length=30)
-
-    class Meta:
-        ordering = ['tag_name']
-
-    def __str__(self):
-        return "{}".format(self.tag_name)
-
-
 class Note(models.Model):
     """Note model definition"""
     date = models.DateTimeField(auto_now_add=True)
@@ -49,10 +38,7 @@ class Note(models.Model):
         related_name='notes'
     )
     task = models.BooleanField(default=False)
-    tags = models.ManyToManyField(
-        Tag,
-        related_name='notes'
-    )
+    tag = models.CharField(max_length=30, null=True, blank=True)
     deleted = models.BooleanField(default=False)
 
     class Meta:
