@@ -1,8 +1,12 @@
+from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Note
-from .serializers import NoteSerializer
+from .serializers import NewNoteSerializer, NoteSerializer
+from .services import get_user_by_id
 
 
 class NoteListView(ListAPIView):
@@ -15,3 +19,31 @@ class NoteListView(ListAPIView):
 
     def get_queryset(self):
         return Note.objects.get_active_user_notes()
+
+
+class NoteCreateView(APIView):
+    """
+    POST a new note
+    """
+    def post(self, request, format=None):
+        serializer = NewNoteSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        user = get_user_by_id(serializer.validated_data['user_id'])
+
+        if not user:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        note = Note.objects.create(
+            end_date=serializer.validated_data['end_date'],
+            note=serializer.validated_data['note'],
+            user=user,
+            task=serializer.validated_data['task']
+        )
+
+        if not note:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_201_CREATED)

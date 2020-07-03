@@ -89,3 +89,38 @@ class GetNoteTest(APITestCase):
     def tearDown(self):
         Note.objects.hard_delete()
         User.objects.hard_delete()
+
+
+class PostNoteTest(APITestCase):
+    """
+    POST a note
+    """
+    def setUp(self):
+        self.active_user = baker.make(
+            'note.user',
+            name='Marta Barros',
+            email='martabarros@example.com'
+        )
+        self.inactive_user = baker.make(
+            'note.user',
+            name='Sara Merino',
+            email='saramerino@example.com',
+            deleted=True
+        )
+
+    def test_post_note_valid(self):
+        url = reverse('create_note')
+        data = {
+            'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
+            'note': fake.text(),
+            'user_id': self.active_user.id,
+            'task': False
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def tearDown(self):
+        Tag.objects.all().delete()
+        Note.objects.hard_delete()
+        User.objects.hard_delete()
