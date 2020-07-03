@@ -42,7 +42,7 @@ class Note(models.Model):
     updated = models.DateTimeField(auto_now=True)
     end_date = models.DateTimeField()
     note = models.TextField()
-    attached_file = models.FileField()
+    attached_file = models.FileField(null=True, blank=True)
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
