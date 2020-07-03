@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from django.urls import reverse
 from django.utils.timezone import make_aware
 
-from .models import User, Tag, Note
+from .models import User, Note
 
 fake = Faker()
 fake.add_provider(lorem)
@@ -120,7 +120,42 @@ class PostNoteTest(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_post_note_end_date_invalid(self):
+        url = reverse('create_note')
+        data = {
+            'end_date': make_aware(datetime.now()),
+            'note': fake.text(),
+            'user_id': self.active_user.id,
+            'task': False
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_post_note_note_invalid(self):
+        url = reverse('create_note')
+        data = {
+            'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
+            'note': None,
+            'user_id': self.active_user.id,
+            'task': False
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_post_note_user_invalid(self):
+        url = reverse('create_note')
+        data = {
+            'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
+            'note': fake.text(),
+            'user_id': self.inactive_user.id,
+            'task': False
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def tearDown(self):
-        Tag.objects.all().delete()
         Note.objects.hard_delete()
         User.objects.hard_delete()

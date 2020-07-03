@@ -29,12 +29,13 @@ class NoteCreateView(APIView):
         serializer = NewNoteSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         user = get_user_by_id(serializer.validated_data['user_id'])
 
         if not user:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            err = {'user': 'El usuario no existe o no se encuentra activo'}
+            return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
         note = Note.objects.create(
             end_date=serializer.validated_data['end_date'],
@@ -44,6 +45,7 @@ class NoteCreateView(APIView):
         )
 
         if not note:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            err = {'note': 'Error guardando la nota'}
+            return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_201_CREATED)
