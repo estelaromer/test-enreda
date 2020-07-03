@@ -1,6 +1,6 @@
 from django.db import models
 
-from .managers import RealManager
+from .managers import NoteManager, RealManager
 
 
 class User(models.Model):
@@ -58,7 +58,7 @@ class Note(models.Model):
     class Meta:
         ordering = ['user', 'end_date']
 
-    objects = RealManager()
+    objects = NoteManager()
 
     def __str__(self):
         return "{}, {}, {}".format(self.note, self.user, self.end_date)
