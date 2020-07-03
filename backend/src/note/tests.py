@@ -14,7 +14,7 @@ fake = Faker()
 fake.add_provider(lorem)
 
 
-class GetEventOcurrencesByDateRangeTest(APITestCase):
+class GetNoteTest(APITestCase):
     """
     GET Notes
     """
