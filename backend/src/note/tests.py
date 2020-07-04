@@ -20,27 +20,24 @@ class GetNotesTest(APITestCase):
     """
     def setUp(self):
         self.active_notes_counter = 3
+        user = baker.make(
+            'note.user',
+            name='Marta Barros',
+            email='martabarros@example.com'
+        )
         self.notes = [
             baker.make(
                 'note.note',
                 end_date=make_aware(datetime(2020, 7, 15, 18, 0, 0)),
                 note=fake.text(),
-                user=baker.make(
-                    'note.user',
-                    name='Marta Barros',
-                    email='martabarros@example.com'
-                ),
+                user=user,
                 task=False
             ),
             baker.make(
                 'note.note',
                 end_date=make_aware(datetime(2020, 7, 17, 18, 0, 0)),
                 note=fake.text(),
-                user=baker.make(
-                    'note.user',
-                    name='Marta Barros',
-                    email='martabarros@example.com'
-                ),
+                user=user,
                 task=False
             ),
             baker.make(
@@ -192,15 +189,16 @@ class GetNoteTest(APITestCase):
     GET a Note
     """
     def setUp(self):
+        user = baker.make(
+            'note.user',
+            name='Marta Barros',
+            email='martabarros@example.com'
+        )
         self.active_note = baker.make(
             'note.note',
             end_date=make_aware(datetime(2020, 7, 15, 18, 0, 0)),
             note=fake.text(),
-            user=baker.make(
-                'note.user',
-                name='Marta Barros',
-                email='martabarros@example.com'
-            ),
+            user=user,
             task=True,
             tag='Facturas, Julio'
         )
@@ -209,11 +207,7 @@ class GetNoteTest(APITestCase):
             'note.note',
             end_date=make_aware(datetime(2020, 7, 17, 18, 0, 0)),
             note=fake.text(),
-            user=baker.make(
-                'note.user',
-                name='Marta Barros',
-                email='martabarros@example.com'
-            ),
+            user=user,
             task=False,
             deleted=True
         )
@@ -231,15 +225,155 @@ class GetNoteTest(APITestCase):
         )
 
     def test_get_note_valid(self):
-        url = reverse('note_detail', args=[self.active_note.id])
+        url = reverse('note', args=[self.active_note.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], self.active_note.id)
 
     def test_get_note_inactive_invalid(self):
-        url = reverse('note_detail', args=[self.inactive_note.id])
+        url = reverse('note', args=[self.inactive_note.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def tearDown(self):
+        Note.objects.hard_delete()
+        User.objects.hard_delete()
+
+
+class DeleteNoteTest(APITestCase):
+    """
+    GET a Note
+    """
+    def setUp(self):
+        user = baker.make(
+            'note.user',
+            name='Marta Barros',
+            email='martabarros@example.com'
+        )
+        self.active_note = baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 15, 18, 0, 0)),
+            note=fake.text(),
+            user=user,
+            task=True,
+            tag='Facturas, Julio'
+        )
+
+        self.inactive_note = baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 17, 18, 0, 0)),
+            note=fake.text(),
+            user=user,
+            task=False,
+            deleted=True
+        )
+
+        baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 20, 18, 0, 0)),
+            note=fake.text(),
+            user=baker.make(
+                'note.user',
+                name='Luis LLanos',
+                email='luisllanos@example.com'
+            ),
+            task=True
+        )
+
+    def test_delete_note_valid(self):
+        url = reverse('note', args=[self.active_note.id])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def tearDown(self):
+        Note.objects.hard_delete()
+        User.objects.hard_delete()
+
+
+class UpdateNoteTest(APITestCase):
+    """
+    UPDATE a Note
+    """
+    def setUp(self):
+        user = baker.make(
+            'note.user',
+            name='Marta Barros',
+            email='martabarros@example.com'
+        )
+        self.active_note = baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 15, 18, 0, 0)),
+            note=fake.text(),
+            user=user,
+            task=True,
+            tag='Facturas, Julio'
+        )
+
+        self.inactive_note = baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 17, 18, 0, 0)),
+            note=fake.text(),
+            user=user,
+            task=False,
+            deleted=True
+        )
+
+    def test_update_note_end_date_valid(self):
+        url = reverse('note', args=[self.active_note.id])
+        data = {
+            'end_date': make_aware(datetime(2020, 7, 15, 18, 0, 0)),
+            'note': self.active_note.note,
+            'user_id': self.active_note.user.id,
+            'user_email': self.active_note.user.email,
+            'user_name': self.active_note.user.name,
+            'task': self.active_note.task,
+            'tag': self.active_note.tag
+        }
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # self.assertEqual(response.data['end_date'], data['end_date'])
+
+    def test_update_note_end_date_invalid(self):
+        url = reverse('note', args=[self.active_note.id])
+        data = {
+            'end_date': make_aware(datetime.now()),
+            'note': self.active_note.note,
+            'user_id': self.active_note.user.id,
+            'user_email': self.active_note.user.email,
+            'user_name': self.active_note.user.name,
+            'task': self.active_note.task,
+            'tag': self.active_note.tag
+        }
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_note_no_tag_valid(self):
+        url = reverse('note', args=[self.active_note.id])
+        data = {
+            'end_date': self.active_note.end_date,
+            'note': self.active_note.note,
+            'user_id': self.active_note.user.id,
+            'user_email': self.active_note.user.email,
+            'user_name': self.active_note.user.name,
+            'task': self.active_note.task,
+            'tag': None
+        }
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_update_note_note_invalid(self):
+        url = reverse('note', args=[self.active_note.id])
+        data = {
+            'end_date': self.active_note.end_date,
+            'note': True,
+            'user_id': self.active_note.user.id,
+            'user_email': self.active_note.user.email,
+            'user_name': self.active_note.user.name,
+            'task': self.active_note.task,
+            'tag': self.active_note.tag
+        }
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def tearDown(self):
         Note.objects.hard_delete()

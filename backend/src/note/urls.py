@@ -3,7 +3,7 @@ from django.urls import path
 from .views import (
     NoteCreateView,
     NoteListView,
-    NoteRetrieveView
+    NoteRetrieveUpdateDestroyView,
 )
 
 urlpatterns = [
@@ -19,7 +19,7 @@ urlpatterns = [
     ),
     path(
         '<int:pk>/',
-        NoteRetrieveView.as_view(),
-        name='note_detail',
+        NoteRetrieveUpdateDestroyView.as_view(),
+        name='note',
     ),
 ]

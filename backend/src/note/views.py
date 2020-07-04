@@ -1,10 +1,8 @@
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from django.shortcuts import get_object_or_404
 
 from .models import Note
 from .serializers import (
@@ -57,9 +55,9 @@ class NoteCreateView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 
-class NoteRetrieveView(RetrieveAPIView):
+class NoteRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """
-    RETRIEVE a note
+    RETRIEVE/DESTROY a note
     """
     serializer_class = NoteSerializer
     queryset = Note.objects.get_active_user_notes()
