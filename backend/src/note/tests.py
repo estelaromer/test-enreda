@@ -14,7 +14,7 @@ fake = Faker()
 fake.add_provider(lorem)
 
 
-class GetNoteTest(APITestCase):
+class GetNotesTest(APITestCase):
     """
     GET Notes
     """
@@ -181,6 +181,65 @@ class PostNoteTest(APITestCase):
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def tearDown(self):
+        Note.objects.hard_delete()
+        User.objects.hard_delete()
+
+
+class GetNoteTest(APITestCase):
+    """
+    GET a Note
+    """
+    def setUp(self):
+        self.active_note = baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 15, 18, 0, 0)),
+            note=fake.text(),
+            user=baker.make(
+                'note.user',
+                name='Marta Barros',
+                email='martabarros@example.com'
+            ),
+            task=True,
+            tag='Facturas, Julio'
+        )
+
+        self.inactive_note = baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 17, 18, 0, 0)),
+            note=fake.text(),
+            user=baker.make(
+                'note.user',
+                name='Marta Barros',
+                email='martabarros@example.com'
+            ),
+            task=False,
+            deleted=True
+        )
+
+        baker.make(
+            'note.note',
+            end_date=make_aware(datetime(2020, 7, 20, 18, 0, 0)),
+            note=fake.text(),
+            user=baker.make(
+                'note.user',
+                name='Luis LLanos',
+                email='luisllanos@example.com'
+            ),
+            task=True
+        )
+
+    def test_get_note_valid(self):
+        url = reverse('note_detail', args=[self.active_note.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.active_note.id)
+
+    def test_get_note_inactive_invalid(self):
+        url = reverse('note_detail', args=[self.inactive_note.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def tearDown(self):
         Note.objects.hard_delete()

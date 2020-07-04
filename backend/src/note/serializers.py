@@ -18,6 +18,7 @@ from .models import Note
 
 class NoteSerializer(ModelSerializer):
     user_email = SerializerMethodField()
+    user_name = SerializerMethodField()
 
     class Meta:
         model = Note
@@ -27,11 +28,16 @@ class NoteSerializer(ModelSerializer):
             'end_date',
             'note',
             'user_email',
+            'user_name',
             'task',
+            'tag'
         )
 
     def get_user_email(self, obj):
         return obj.user.email
+
+    def get_user_name(self, obj):
+        return obj.user.name
 
 
 class NewNoteSerializer(Serializer):

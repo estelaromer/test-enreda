@@ -1,11 +1,17 @@
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.shortcuts import get_object_or_404
+
 from .models import Note
-from .serializers import NewNoteSerializer, NoteSerializer
+from .serializers import (
+    NewNoteSerializer,
+    NoteSerializer,
+)
+
 from .services import get_user_by_id
 
 
@@ -49,3 +55,11 @@ class NoteCreateView(APIView):
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_201_CREATED)
+
+
+class NoteRetrieveView(RetrieveAPIView):
+    """
+    RETRIEVE a note
+    """
+    serializer_class = NoteSerializer
+    queryset = Note.objects.get_active_user_notes()
