@@ -1,28 +1,63 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="grid-container">
+      <app-header class="header-title"></app-header>
+      <app-navigation class="navigation-links"></app-navigation>
+      <app-content class="data-content"></app-content>
+      <app-footer class="footer"></app-footer>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from '@/components/Header.vue'
+import Navigation from '@/components/Navigation.vue'
+import Content from '@/components/Content.vue'
+import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    'app-header': Header,
+    'app-navigation': Navigation,
+    'app-content': Content,
+    'app-footer': Footer
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.header-title {
+  grid-area: header;
+}
+.navigation-links {
+  grid-area: links;
+}
+.data-content {
+  grid-area: data;
+}
+.footer {
+  grid-area: footer;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 35% auto 10%;
+  grid-auto-rows: minmax(50px, auto);
+  grid-gap: 10px;
+  grid-template-areas:
+    "header  header  header"
+    "links   links   links"
+    "data    data    data"
+    "footer  footer  footer";
+}
+
+@media screen and (min-width: 900px) {
+  .grid-container {
+    grid-template-areas:
+      "header  links   links"
+      "data    data    data"
+      "footer  footer  footer";
+  }
 }
 </style>
