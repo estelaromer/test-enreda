@@ -7,10 +7,8 @@
 <script>
 export default {
   name: 'Footer',
-  data () {
-    return {
-      message: 'EstelaR @ 2020'
-    }
+  props: {
+    message: String
   }
 }
 </script>

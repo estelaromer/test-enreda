@@ -7,10 +7,8 @@
 <script>
 export default {
   name: 'Header',
-  data () {
-    return {
-      title: 'Note App'
-    }
+  props: {
+    title: String
   }
 }
 </script>

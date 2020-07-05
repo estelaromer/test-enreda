@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div class="grid-container">
-      <app-header class="header-title"></app-header>
+      <app-header class="header-title" v-bind:title="title"></app-header>
       <app-navigation class="navigation-links"></app-navigation>
       <app-content class="data-content"></app-content>
-      <app-footer class="footer"></app-footer>
+      <app-footer class="footer" v-bind:message="message"></app-footer>
     </div>
   </div>
 </template>
@@ -22,6 +22,12 @@ export default {
     'app-navigation': Navigation,
     'app-content': Content,
     'app-footer': Footer
+  },
+  data () {
+    return {
+      title: 'Note App',
+      message: 'EstelaR @ 2020'
+    }
   }
 }
 </script>
