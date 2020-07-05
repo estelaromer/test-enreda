@@ -1,13 +1,13 @@
 <template>
   <div class="content-container">
-    <h1>List of Users:</h1>
+    <h1>List of Notes:</h1>
     <br>
     <table id="users-table">
       <!-- Table Header Row -->
       <tr>
         <th>Note ID</th>
         <th>End Date</th>
-        <th>Name</th>
+        <th>Note</th>
         <th>User Email</th>
         <th>Task</th>
         <th>Tag</th>
@@ -16,7 +16,7 @@
       <tr v-for="note in notes" v-bind:key="note">
         <td>{{ note.id }}</td>
         <td>{{ note.endDate }}</td>
-        <td>{{ note.name }}</td>
+        <td>{{ note.note }}</td>
         <td>{{ note.userEmail }}</td>
         <td>{{ note.task }}</td>
         <td>{{ note.tag }}</td>

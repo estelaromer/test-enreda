@@ -1,16 +1,19 @@
 <template>
   <div class="content-container">
+    <app-add-new-note v-on:create-note="createNote"></app-add-new-note>
     <app-list-notes v-bind:notes="notes"></app-list-notes>
   </div>
 </template>
 
 <script>
 import ListNotes from './ListNotes.vue'
+import AddNewNote from './AddNewNote.vue'
 
 export default {
   name: 'Content',
   components: {
-    'app-list-notes': ListNotes
+    'app-list-notes': ListNotes,
+    'app-add-new-note': AddNewNote
   },
   data () {
     return {
@@ -33,6 +36,22 @@ export default {
         },
       ]
     }
+  },
+  methods: {
+    createNote(note) {
+      var newNote = {
+        id: this.notes.length + 1,
+        endDate: note.endDate,
+        note: note.note,
+        userEmail: note.userEmail,
+        task: note.task,
+        tag: note.tag
+      }
+
+      // Add the user to the local array of users
+      this.notes.push(newNote);
+      
+    },
   }
 }
 </script>
