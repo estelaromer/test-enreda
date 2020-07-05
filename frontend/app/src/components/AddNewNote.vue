@@ -4,7 +4,13 @@
     <br>
     <div class="add-note-input">
         <label for="newEndDate">EndDate:</label>
-        <input type="text" id="newEndDate" v-model="note.endDate">
+        <input
+            type="datetime-local"
+            ref="input"
+            id="newEndDate" 
+            value="note.endDate"
+            v-model="note.endDate"
+        >
         <br>
         <span>Note:</span>
         <p style="white-space: pre-line;">{{ note.note }}</p>
@@ -25,7 +31,7 @@
         <label for="newTag">Tag:</label>
         <input type="text" id="newTag" v-model="note.tag">
         <br>
-        <button type="submit" v-on:click="addNewUser">Add User</button>
+        <button type="submit" v-on:click="addNewUser">Add Note</button>
     </div>
   </div>
 </template>
@@ -36,7 +42,7 @@ export default {
     data () {
         return {
             note: {
-                endDate: '',
+                endDate: new Date(),
                 note: '',
                 userEmail: '',
                 task: false,
@@ -49,7 +55,7 @@ export default {
             this.$emit('create-note', this.note);
 
             // Clear the variables used for reading in the new user's info
-            this.note.endDate = '';
+            this.note.endDate = new Date();
             this.note.note = '';
             this.note.userEmail = '';
             this.note.task = false;

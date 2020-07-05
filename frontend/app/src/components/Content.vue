@@ -20,7 +20,7 @@ export default {
       notes: [
         {
           id: 1,
-          endDate: '2020-07-20',
+          endDate: new Date("July 17, 2020"),
           note: 'Primera nota',
           userEmail: 'user1@example.com',
           task: false,
@@ -28,7 +28,7 @@ export default {
         },
         {
           id: 2,
-          endDate: '2020-07-21',
+          endDate: new Date("July 20, 2020"),
           note: 'Segunda nota',
           userEmail: 'user1@example.com',
           task: true,
@@ -41,7 +41,7 @@ export default {
     createNote(note) {
       var newNote = {
         id: this.notes.length + 1,
-        endDate: note.endDate,
+        endDate: new Date(Date.parse(note.endDate)),
         note: note.note,
         userEmail: note.userEmail,
         task: note.task,

@@ -15,7 +15,7 @@
       <!-- Table Elements (Rows) -->
       <tr v-for="note in notes" v-bind:key="note">
         <td>{{ note.id }}</td>
-        <td>{{ note.endDate }}</td>
+        <td>{{ note.endDate.toDateString() }}</td>
         <td>{{ note.note }}</td>
         <td>{{ note.userEmail }}</td>
         <td>{{ note.task }}</td>
