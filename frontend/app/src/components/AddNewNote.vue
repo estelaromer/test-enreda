@@ -18,10 +18,8 @@
         <textarea v-model="note.note"></textarea>
         <br>
         <select v-model="note.userEmail">
-        <option disabled value="">Seleccione un usuario</option>
-        <option>user1@example.com</option>
-        <option>user2@example.com</option>
-        <option>user3@example.com</option>
+          <option disabled value="">Seleccione un elemento</option>
+          <option v-for="user in users" v-bind:key="user">{{ user.email }}</option>
         </select>
         <span>Seleccionado: {{ note.userEmail }}</span>
         <br>
@@ -38,30 +36,34 @@
 
 <script>
 export default {
-    name: 'AddNewUser',
-    data () {
-        return {
-            note: {
-                endDate: new Date(),
-                note: '',
-                userEmail: '',
-                task: false,
-                tag: ''
-            }
-        }
-    },
-    methods: {
-        addNewUser() {
-            this.$emit('create-note', this.note);
+  name: 'AddNewUser',
+  props:{
+    users: Array
+  },
+  data () {
+      return {
+          note: {
+              endDate: new Date(),
+              note: '',
+              userEmail: '',
+              task: false,
+              tag: ''
+          }
+      }
+  },
+  methods: {
+      addNewUser() {
+          this.$emit('create-note', this.note);
 
-            // Clear the variables used for reading in the new user's info
-            this.note.endDate = new Date();
-            this.note.note = '';
-            this.note.userEmail = '';
-            this.note.task = false;
-            this.note.tag = ''
-        }
-    }
+          // Clear the variables used for reading in the new user's info
+          this.note.endDate = new Date();
+          this.note.note = '';
+          this.note.userEmail = '';
+          this.note.task = false;
+          this.note.tag = ''
+          console.log(this.users)
+      }
+  }
 }
 </script>
 
