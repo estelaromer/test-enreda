@@ -24,16 +24,31 @@ export default {
   },
   methods: {
     createNote(note) {
-      var newNote = {
-        end_date: new Date(Date.parse(note.endDate)),
-        note: note.note,
-        user_email: note.userEmail,
-        task: note.task,
-        tag: note.tag,
+      var newNote = new FormData()
+      if (note.attachedFile != null){
+        newNote.append('end_date', note.endDate)
+        newNote.append('note', note.note)
+        newNote.append('attached_file', note.attachedFile)
+        newNote.append('user_email', note.userEmail)
+        newNote.append('task', note.task)
+        newNote.append('tag', note.tag)
+      } else {
+        // newNote = {
+        //   end_date: new Date(Date.parse(note.endDate)),
+        //   note: note.note,
+        //   user_email: note.userEmail,
+        //   task: note.task,
+        //   tag: note.tag,
+        // }
+        newNote.append('end_date', note.endDate)
+        newNote.append('note', note.note)
+        newNote.append('attached_file', note.attachedFile)
+        newNote.append('user_email', note.userEmail)
+        newNote.append('task', note.task)
+        newNote.append('tag', note.tag)
       }
-      console.log(newNote)
       // Add the new note to the database via a HTTP POST call
-      axios.post('http://localhost:8000/api/notes/new/', newNote)
+      axios.post('http://localhost:8000/api/notes/new/', newNote, {headers: {'Content-Type': 'multipart/form-data'}})
         .then((response) => {
           // handle success
           this.messageType = 'Success'

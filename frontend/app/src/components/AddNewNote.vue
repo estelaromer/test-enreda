@@ -17,8 +17,11 @@
         <br>
         <textarea v-model="note.note"></textarea>
         <br>
+        <label for="newAttachedFile">File:</label>
+        <input type="file" id="attachedFile" ref="file" v-on:change="handleFileUpload()"/>
+        <br>
         <select v-model="note.userEmail">
-          <option disabled value="">Seleccione un elemento</option>
+          <option disabled value="">Seleccione un usuario</option>
           <option v-for="user in users" v-bind:key="user">{{ user.email }}</option>
         </select>
         <span>Seleccionado: {{ note.userEmail }}</span>
@@ -45,6 +48,7 @@ export default {
           note: {
               endDate: new Date(),
               note: '',
+              attachedFile: null,
               userEmail: '',
               task: false,
               tag: ''
@@ -53,15 +57,21 @@ export default {
   },
   methods: {
       addNewUser() {
+        console.log("LA NUEVA")
+        console.log(this.note)
           this.$emit('create-note', this.note);
 
           // Clear the variables used for reading in the new user's info
           this.note.endDate = new Date();
           this.note.note = '';
+          this.note.attachedFile = null;
           this.note.userEmail = '';
           this.note.task = false;
           this.note.tag = ''
           console.log(this.users)
+      },
+      handleFileUpload(){
+        this.note.attachedFile = this.$refs.file.files[0];
       }
   }
 }
