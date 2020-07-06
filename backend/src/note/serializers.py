@@ -5,6 +5,7 @@ from rest_framework.serializers import (
     CharField,
     DateTimeField,
     EmailField,
+    FileField,
     ModelSerializer,
     Serializer,
     SerializerMethodField,
@@ -92,6 +93,7 @@ class NoteSerializer(ModelSerializer):
 class NewNoteSerializer(Serializer):
     end_date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
     note = CharField(min_length=1)
+    attached_file = FileField(required=False)
     user_email = EmailField()
     task = BooleanField()
     tag = CharField(required=False)

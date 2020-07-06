@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -30,10 +31,16 @@ class NoteCreateView(APIView):
     """
     POST a new note
     """
+    parser_classes = (FormParser, MultiPartParser)
+
     def post(self, request, format=None):
         serializer = NewNoteSerializer(data=request.data)
+        print(request.FILES.get('attached_file'))
+        file_obj = request.FILES.get('attached_file')
 
         if not serializer.is_valid():
+            print("NO VALIDO!")
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         user = get_user_by_email(serializer.validated_data['user_email'])
@@ -42,16 +49,23 @@ class NoteCreateView(APIView):
             err = {'user': 'El usuario no existe o no se encuentra activo'}
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
-        note = Note.objects.create(
+        if not file_obj:
+            Note.objects.create(
+                end_date=serializer.validated_data['end_date'],
+                note=serializer.validated_data['note'],
+                user=user,
+                task=serializer.validated_data['task'],
+                tag=serializer.validated_data['tag']
+            )
+
+        Note.objects.create(
             end_date=serializer.validated_data['end_date'],
             note=serializer.validated_data['note'],
+            attached_file=file_obj,
             user=user,
-            task=serializer.validated_data['task']
+            task=serializer.validated_data['task'],
+            tag=serializer.validated_data['tag']
         )
-
-        if not note:
-            err = {'note': 'Error guardando la nota'}
-            return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_201_CREATED)
 
