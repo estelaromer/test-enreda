@@ -16,7 +16,7 @@ fake.add_provider(lorem)
 
 class GetNotesTest(APITestCase):
     """
-    GET Notes
+    GET Active Notes
     """
     def setUp(self):
         self.active_notes_counter = 3
@@ -110,7 +110,7 @@ class PostNoteTest(APITestCase):
         data = {
             'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
             'note': fake.text(),
-            'user_id': self.active_user.id,
+            'user_email': self.active_user.email,
             'task': False
         }
 
@@ -122,7 +122,7 @@ class PostNoteTest(APITestCase):
         data = {
             'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
             'note': fake.text(),
-            'user_id': self.active_user.id,
+            'user_email': self.active_user.email,
             'task': False,
             'tag': 'Factura'
         }
@@ -135,7 +135,7 @@ class PostNoteTest(APITestCase):
         data = {
             'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
             'note': fake.text(),
-            'user_id': self.active_user.id,
+            'user_email': self.active_user.email,
             'task': False,
             'tag': 'Vamos a crear una cadena que sea más larga de treinta caracteres'
         }
@@ -148,7 +148,7 @@ class PostNoteTest(APITestCase):
         data = {
             'end_date': make_aware(datetime.now()),
             'note': fake.text(),
-            'user_id': self.active_user.id,
+            'user_email': self.active_user.email,
             'task': False
         }
 
@@ -160,7 +160,7 @@ class PostNoteTest(APITestCase):
         data = {
             'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
             'note': None,
-            'user_id': self.active_user.id,
+            'user_email': self.active_user.email,
             'task': False
         }
 
@@ -172,7 +172,7 @@ class PostNoteTest(APITestCase):
         data = {
             'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
             'note': fake.text(),
-            'user_id': self.inactive_user.id,
+            'user_email': self.inactive_user.email,
             'task': False
         }
 
@@ -377,4 +377,37 @@ class UpdateNoteTest(APITestCase):
 
     def tearDown(self):
         Note.objects.hard_delete()
+        User.objects.hard_delete()
+
+
+class GetUsersTest(APITestCase):
+    """
+    GET Active Users
+    """
+    def setUp(self):
+        self.active_users_counter = 2
+        baker.make(
+            'note.user',
+            name='Marta Barros',
+            email='martabarros@example.com'
+        )
+        baker.make(
+            'note.user',
+            name='Luis Lanos',
+            email='luisllanos@example.com'
+        )
+        baker.make(
+            'note.user',
+            name='Sara Merino',
+            email='saramerino@example.com',
+            deleted=True
+        )
+
+    def test_get_users_valid(self):
+        url = reverse('users')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), self.active_users_counter)
+
+    def tearDown(self):
         User.objects.hard_delete()

@@ -4,13 +4,14 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Note
+from .models import Note, User
 from .serializers import (
     NewNoteSerializer,
     NoteSerializer,
+    UserSerializer
 )
 
-from .services import get_user_by_id
+from .services import get_user_by_email
 
 
 class NoteListView(ListAPIView):
@@ -35,7 +36,7 @@ class NoteCreateView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        user = get_user_by_id(serializer.validated_data['user_id'])
+        user = get_user_by_email(serializer.validated_data['user_email'])
 
         if not user:
             err = {'user': 'El usuario no existe o no se encuentra activo'}
@@ -61,3 +62,15 @@ class NoteRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """
     serializer_class = NoteSerializer
     queryset = Note.objects.get_active_user_notes()
+
+
+class UserListView(ListAPIView):
+    """
+    GET active users ordered by email
+    """
+    serializer_class = UserSerializer
+    filter_backends = (OrderingFilter, )
+    ordering_fields = ('user__email', )
+
+    def get_queryset(self):
+        return User.objects.get_active()

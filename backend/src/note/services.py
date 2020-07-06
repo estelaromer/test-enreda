@@ -1,7 +1,7 @@
 from .models import User
 
 
-def get_user_by_id(id):
+def get_user_by_email(email):
     """
     """
-    return User.objects.get_active().filter(id=id).first()
+    return User.objects.get_active().filter(email=email).first()

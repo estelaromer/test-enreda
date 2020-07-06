@@ -4,7 +4,7 @@ from rest_framework.serializers import (
     BooleanField,
     CharField,
     DateTimeField,
-    IntegerField,
+    EmailField,
     ModelSerializer,
     Serializer,
     SerializerMethodField,
@@ -13,7 +13,7 @@ from rest_framework.serializers import (
 
 from django.utils.timezone import make_aware
 
-from .models import Note
+from .models import Note, User
 
 
 # class NoteSerializer(ModelSerializer):
@@ -77,7 +77,6 @@ class NoteSerializer(ModelSerializer):
     def validate_note(self, value):
         if not isinstance(value, str):
             raise ValidationError("El mensaje no es una cadena")
-        print(type(value))
         if len(value) < 1:
             raise ValidationError("El mensaje de la nota no puede estar vacío")
 
@@ -93,7 +92,7 @@ class NoteSerializer(ModelSerializer):
 class NewNoteSerializer(Serializer):
     end_date = DateTimeField(format="%Y-%m-%d %H:%M:%S")
     note = CharField(min_length=1)
-    user_id = IntegerField()
+    user_email = EmailField()
     task = BooleanField()
     tag = CharField(required=False)
 
@@ -114,3 +113,13 @@ class NewNoteSerializer(Serializer):
             raise ValidationError("La tag no debe ocupar más de 30 caracteres")
 
         return value
+
+
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'name',
+            'email'
+        )

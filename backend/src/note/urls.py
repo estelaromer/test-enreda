@@ -4,6 +4,7 @@ from .views import (
     NoteCreateView,
     NoteListView,
     NoteRetrieveUpdateDestroyView,
+    UserListView
 )
 
 urlpatterns = [
@@ -21,5 +22,10 @@ urlpatterns = [
         '<int:pk>/',
         NoteRetrieveUpdateDestroyView.as_view(),
         name='note',
+    ),
+    path(
+        'users/',
+        UserListView.as_view(),
+        name='users',
     ),
 ]
