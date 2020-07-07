@@ -5,7 +5,6 @@
     <table id="users-table">
       <!-- Table Header Row -->
       <tr>
-        <th>Note ID</th>
         <th>End Date</th>
         <th>Note</th>
         <th>User Email</th>
@@ -14,11 +13,10 @@
       </tr>
       <!-- Table Elements (Rows) -->
       <tr v-for="note in notes" v-bind:key="note">
-        <td>{{ note.id }}</td>
         <td>{{ (new Date(Date.parse(note.endDate))).toDateString() }}</td>
-        <td>{{ note.note }}</td>
+        <td>{{ note.note.substring(0,50) + '...' }}</td>
         <td>{{ note.userEmail }}</td>
-        <td>{{ note.task }}</td>
+        <td>{{ (note.task) ? 'Yes': 'No' }}</td>
         <td>{{ note.tag }}</td>
       </tr>
     </table>
