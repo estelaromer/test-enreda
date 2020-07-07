@@ -47,6 +47,7 @@ export default {
 }
 
 .grid-container {
+  font-family: Arial, Helvetica, sans-serif;
   display: grid;
   grid-template-columns: 35% auto 10%;
   grid-auto-rows: minmax(50px, auto);

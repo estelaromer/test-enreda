@@ -64,7 +64,7 @@ class NoteCreateView(APIView):
             attached_file=file_obj,
             user=user,
             task=serializer.validated_data['task'],
-            tag=serializer.validated_data['tag']
+            tag=serializer.validated_data.get('tag', None)
         )
 
         return Response(status=status.HTTP_201_CREATED)

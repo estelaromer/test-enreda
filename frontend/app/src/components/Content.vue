@@ -25,28 +25,16 @@ export default {
   methods: {
     createNote(note) {
       var newNote = new FormData()
-      if (note.attachedFile != null){
-        newNote.append('end_date', note.endDate)
-        newNote.append('note', note.note)
+      newNote.append('end_date', note.endDate)
+      newNote.append('note', note.note)
+      if (note.attachedFile !== null){
         newNote.append('attached_file', note.attachedFile)
-        newNote.append('user_email', note.userEmail)
-        newNote.append('task', note.task)
-        newNote.append('tag', note.tag)
-      } else {
-        // newNote = {
-        //   end_date: new Date(Date.parse(note.endDate)),
-        //   note: note.note,
-        //   user_email: note.userEmail,
-        //   task: note.task,
-        //   tag: note.tag,
-        // }
-        newNote.append('end_date', note.endDate)
-        newNote.append('note', note.note)
-        newNote.append('attached_file', note.attachedFile)
-        newNote.append('user_email', note.userEmail)
-        newNote.append('task', note.task)
-        newNote.append('tag', note.tag)
       }
+      
+      newNote.append('user_email', note.userEmail)
+      newNote.append('task', note.task)
+      newNote.append('tag', (note.tag !== '') ? note.tag : null)
+ 
       // Add the new note to the database via a HTTP POST call
       axios.post('http://localhost:8000/api/notes/new/', newNote, {headers: {'Content-Type': 'multipart/form-data'}})
         .then((response) => {
@@ -205,6 +193,6 @@ export default {
 <style scoped>
 div {
   margin: auto;
-  padding: 4em;
+  padding: 1em;
 }
 </style>
