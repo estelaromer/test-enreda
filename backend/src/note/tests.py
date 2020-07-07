@@ -104,6 +104,7 @@ class PostNoteTest(APITestCase):
             email='saramerino@example.com',
             deleted=True
         )
+        self.headers = {'Content-Type': 'multipart/form-data'}
 
     def test_post_note_without_tag_valid(self):
         url = reverse('create_note')
@@ -114,7 +115,7 @@ class PostNoteTest(APITestCase):
             'task': False
         }
 
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_post_note_with_tag_valid(self):
@@ -127,7 +128,7 @@ class PostNoteTest(APITestCase):
             'tag': 'Factura'
         }
 
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_post_note_tag_invalid(self):
@@ -140,7 +141,7 @@ class PostNoteTest(APITestCase):
             'tag': 'Vamos a crear una cadena que sea más larga de treinta caracteres'
         }
 
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_post_note_end_date_invalid(self):
@@ -152,19 +153,19 @@ class PostNoteTest(APITestCase):
             'task': False
         }
 
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_post_note_note_invalid(self):
         url = reverse('create_note')
         data = {
             'end_date': make_aware(datetime(2020, 7, 13, 20, 0, 0)),
-            'note': None,
+            'note': '',
             'user_email': self.active_user.email,
             'task': False
         }
 
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_post_note_user_invalid(self):
@@ -176,7 +177,7 @@ class PostNoteTest(APITestCase):
             'task': False
         }
 
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def tearDown(self):

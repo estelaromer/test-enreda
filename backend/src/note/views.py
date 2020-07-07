@@ -35,12 +35,9 @@ class NoteCreateView(APIView):
 
     def post(self, request, format=None):
         serializer = NewNoteSerializer(data=request.data)
-        print(request.FILES.get('attached_file'))
         file_obj = request.FILES.get('attached_file')
 
         if not serializer.is_valid():
-            print("NO VALIDO!")
-            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         user = get_user_by_email(serializer.validated_data['user_email'])
@@ -55,7 +52,7 @@ class NoteCreateView(APIView):
                 note=serializer.validated_data['note'],
                 user=user,
                 task=serializer.validated_data['task'],
-                tag=serializer.validated_data['tag']
+                tag=serializer.validated_data.get('tag', None)
             )
 
         Note.objects.create(
