@@ -8,3 +8,5 @@
 6. Comprobamos accediendo a http://localhost:8000/api/notes/   
 7. En la carpeta `frontend/app`: `docker-compose build`y `docker-compose up -d`
 8. Comprobamos accediendo a http://localhost:8081  
+9. Para apagar los contenedores, correr tanto en `backend` como en `frontend/app`el comando: `docker-compose down -v`  
+## Nota: no se ha implementado la validación de los campos del formulario en el frontend, pero sí en el backend. Para ver el estado de las llamadas a la API, correr el siguiente comando en la carpeta `backend`: `docker-compose logs -f`   
